@@ -8,9 +8,22 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
-body { background: linear-gradient(135deg, #c2e9fb, #a1c4fd); font-family:'Poppins',sans-serif; overflow-x:hidden; padding-bottom:50px; }
-.heart{position:fixed;font-size:18px;animation:floatUp 4s linear forwards;} 
-@keyframes floatUp {from{transform:translateY(0);opacity:1;} to{transform:translateY(-300px);opacity:0;}}
+body { 
+  background: linear-gradient(135deg, #c2e9fb, #a1c4fd); 
+  font-family:'Poppins',sans-serif; 
+  overflow-x:hidden; 
+  overflow-anchor: none; /* prevent scroll jumps */
+  padding-bottom:50px; 
+}
+.heart{
+  position:fixed;
+  font-size:18px;
+  animation:floatUp 4s linear forwards;
+} 
+@keyframes floatUp {
+  from{transform:translateY(0);opacity:1;}
+  to{transform:translateY(-300px);opacity:0;}
+}
 .movable{position:absolute;transition:top 0.6s ease,left 0.6s ease;}
 #wishText{opacity:0;transform:scale(0.7);transition:0.6s;font-family:'Pacifico',cursive;text-align:center;}
 #wishText span{background:rgba(255,255,255,0.9);padding:12px 20px;border-radius:15px;color:#0d47a1;display:inline-block;}
@@ -40,12 +53,13 @@ body { background: linear-gradient(135deg, #c2e9fb, #a1c4fd); font-family:'Poppi
 <!-- Audios -->
 <audio id="bdayAudio"><source src="voice.ogg" type="audio/ogg"></audio>
 <audio id="ummaahNormal"><source src="ummaah_normal.ogg" type="audio/ogg"></audio>
+<audio id="ummaahSpecial"><source src="special_ummaah.ogg" type="audio/ogg"></audio>
 <audio id="handAudio"><source src="handAudio.ogg" type="audio/ogg"></audio>
 
 <!-- Birthday Wish -->
 <div class="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
   <div id="wishText" class="text-3xl px-4">
-    <span>HAPPY BIRTHDAY 🎂<br>Ammuuu Kunjiiii 💖</span>
+    <span>HAPPY BIRTHDAY 🎂<br>Ammuuu Kunjiiii... 💖</span>
   </div>
 </div>
 
@@ -66,9 +80,8 @@ body { background: linear-gradient(135deg, #c2e9fb, #a1c4fd); font-family:'Poppi
 <!-- Buttons -->
 <button id="letterBtn" class="bg-orange-500 mt-2">Birthday Card 💌</button>
 <div id="letterBox">
-🎁 Happy b'day en thanga kunji vairapattehh... Neenga special ah feel pandirngalo illaya, naa feel pandren. 20s la step edutu vechi irukkinga. 20s ku aprm irukka life beautiful ah meaningful ah write pannunga, chi chi pannalam... If I'm here or not today or tomorrow or next year or next decade, I'm always there for you as a strong pillar... <br><br>
-To : Ammmuu kunji <br>
-By : Kari kunji
+🎁 Happy b'day en thanga kunji vairapattehh... Neenga special ah feel pandirngalo illayo, naa special ah feel pandren. 20s la step edutu vechi irukkinga. 20s ku aprm irukka life beautiful ah meaningful ah write pannunga, chi chi pannalam... If I'm here or not, today or tomorrow, next year or next decade, I will always be there for you as a strong pillar... <br><br>
+To : Ammuu kunji    By : Kari kunji
 </div>
 
 <button id="catchBtn" class="bg-yellow-400 mt-2">Catch Me 😂</button>
@@ -110,8 +123,16 @@ function getISTNow(){return new Date(new Date().toLocaleString("en-US",{timeZone
 function updateTimer(){let now=getISTNow();let years=now.getFullYear()-2006;let months=now.getMonth()-3;let days=now.getDate()-4;if(days<0){months--;days+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}if(months<0){years--;months+=12;}let h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();document.getElementById("timer").innerText=`${years}y ${months}m ${days}d ${h}h ${m}m ${s}s ❤️`;}
 setInterval(updateTimer,1000); updateTimer();
 
-// Hearts
-setInterval(()=>{ let h=document.createElement("div"); h.className="heart"; h.innerText="💖"; h.style.left=(30+Math.random()*40)+"vw"; h.style.bottom="0px"; document.body.appendChild(h); setTimeout(()=>h.remove(),4000); },150);
+// Hearts (optimized)
+setInterval(()=>{ 
+  let h=document.createElement("div"); 
+  h.className="heart"; 
+  h.innerText="💖"; 
+  h.style.left=(30+Math.random()*40)+"vw"; 
+  h.style.bottom="0px"; 
+  document.body.appendChild(h); 
+  setTimeout(()=>h.remove(),3000); 
+},400);
 
 // Confetti
 function fullPop(){for(let i=0;i<3;i++){confetti({particleCount:150,spread:80,origin:{x:0.5,y:0.6}, shapes:["💖","💋","🦋","🎈","🎀","🌟"]});}}
@@ -124,14 +145,14 @@ window.onload=()=>{
   a.play().catch(()=>{document.body.addEventListener("click",()=>a.play(),{once:true});});
   setTimeout(()=>t.classList.remove("show"),5000);
 
-  // Play background music continuously
+  // Background music
   let bgMusic=document.getElementById("bgMusic");
   bgMusic.play().catch(()=>{document.body.addEventListener("click",()=>bgMusic.play(),{once:true});});
 };
 
 // Catch Button
 let btn=document.getElementById("catchBtn"); let active=false; let moveInterval;
-btn.onclick=()=>{if(!active){active=true;btn.innerText="🦋";btn.classList.add("movable");btn.style.width="60px";btn.style.height="60px";btn.style.borderRadius="50%";let card=document.getElementById("card");moveInterval=setInterval(()=>{ let x=Math.random()*(card.clientWidth-60); let y=Math.random()*(card.clientHeight-60); btn.style.left=x+"px"; btn.style.top=y+"px"; },650);}else{ clearInterval(moveInterval); let msg=document.getElementById("finalMsg"); msg.classList.add("show"); fullPop(); setTimeout(()=>{ msg.classList.remove("show"); btn.innerText="Catch Me 😂"; btn.classList.remove("movable"); btn.style=""; active=false; },5000);}};
+btn.onclick=()=>{if(!active){active=true;btn.innerText="🦋";btn.classList.add("movable");btn.style.width="60px";btn.style.height="60px";btn.style.borderRadius="50%";let card=document.getElementById("card");moveInterval=setInterval(()=>{ let x=Math.random()*(card.clientWidth-60); let y=Math.random()*(card.clientHeight-60); btn.style.left=x+"px"; btn.style.top=y+"px"; },650);}else{ clearInterval(moveInterval); let msg=document.getElementById("finalMsg"); msg.classList.add("show"); fullPop(); setTimeout(()=>{ msg.classList.remove("show"); btn.innerText="Catch Me 😂"; btn.classList.remove("movable"); btn.style=""; active=false; },5000);}}; 
 
 // Image Modal
 document.querySelectorAll('.imgBox img').forEach(img=>{img.onclick=()=>{document.getElementById('modalImg').src=img.src;document.getElementById('imgModal').style.display='flex';}});
@@ -145,23 +166,39 @@ const onlineGiftSection=document.getElementById('onlineGiftSection');
 document.getElementById('showGiftBtn').onclick=()=>{onlineGiftSection.style.display=onlineGiftSection.style.display==='none'?'block':'none';}
 const giftButtons=[{text:"I Love You ❤️",sound:"love.ogg",emoji:"💖"},{text:"Sorry 😔",sound:"sorry.ogg",emoji:"💌"},{text:"I Like You 😏",sound:"like.ogg",emoji:"💋"},{text:"Meow Meow 🐱",sound:"meow.ogg",emoji:"🐱"},{text:"Dubi Dubi 🎵",sound:"dubi.ogg",emoji:"🎶"},{text:"Special Ummaah 💋",sound:"special_ummaah.ogg",emoji:"💋"}];
 const onlineGiftContainer=document.getElementById('onlineGiftContainer');
-giftButtons.forEach((b)=>{let btn=document.createElement('button');btn.className='giftBox bg-purple-400 text-white';btn.innerText=b.text;let audio=document.createElement('audio');audio.src=b.sound;btn.appendChild(audio);btn.onclick=()=>{audio.play();createFlyEmojiRandom(b.emoji,15);};onlineGiftContainer.appendChild(btn);});
+giftButtons.forEach((b)=>{let btn=document.createElement('button');btn.className='giftBox bg-purple-400 text-white';btn.innerText=b.text;let audio=document.createElement('audio');audio.src=b.sound;btn.appendChild(audio);btn.onclick=()=>{audio.play();createFlyEmojiRandom(b.emoji,8);};onlineGiftContainer.appendChild(btn);});
 
-// Flying emoji
-function createFlyEmojiRandom(type='💋',count=10){for(let i=0;i<count;i++){let f=document.createElement('div');f.className='flyingEmoji';f.innerText=type;f.style.left=Math.random()*window.innerWidth+'px';f.style.top=Math.random()*window.innerHeight+'px';let rot=(Math.random()*360)+'deg';let scale=(0.8+Math.random()*0.7);let xMove=(Math.random()-0.5)*200;let yMove=-(50+Math.random()*150);f.animate([{transform:`translate(0,0) rotate(0deg) scale(1)`,opacity:1},{transform:`translate(${xMove}px, ${yMove}px) rotate(${rot}) scale(${scale})`,opacity:0}],{duration:1500,easing:'ease-out'});document.body.appendChild(f);setTimeout(()=>f.remove(),1500);}}
+// Flying emoji optimized
+function createFlyEmojiRandom(type='💋',count=8){
+  count = Math.min(count, 8);
+  for(let i=0;i<count;i++){
+    let f=document.createElement('div');
+    f.className='flyingEmoji';
+    f.innerText=type;
+    f.style.left=Math.random()*window.innerWidth+'px';
+    f.style.top=Math.random()*window.innerHeight+'px';
+    let rot=(Math.random()*360)+'deg';
+    let scale=(0.8+Math.random()*0.5);
+    let xMove=(Math.random()-0.5)*100;
+    let yMove=-(50+Math.random()*100);
+    f.animate([{transform:`translate(0,0) rotate(0deg) scale(1)`,opacity:1},{transform:`translate(${xMove}px, ${yMove}px) rotate(${rot}) scale(${scale})`,opacity:0}],{duration:1200,easing:'ease-out'});
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1200);
+  }
+}
 
 // Hand Button
-document.getElementById('handBtn').onclick=()=>{document.getElementById('handAudio').play();createFlyEmojiRandom('💋',20);createFlyEmojiRandom('💖',20);createFlyEmojiRandom('🦋',20);};
+document.getElementById('handBtn').onclick=()=>{document.getElementById('handAudio').play();createFlyEmojiRandom('💋',15);createFlyEmojiRandom('💖',15);createFlyEmojiRandom('🦋',15);};
 
 // 20 Reasons and Ummaah
-const reasons=["Your manasu","Your attitude","The time you give only to me","attention you give to me","That hidden love","Yen mela kaatura kovam","Your eyes","Your nose","Your eyebrows","Your lips","Your round face","That neck","unga Azhagu","neenga V2 la edukura risk","risk eduttu en kuda rounds varadu","naa ketadum en kuda rounds Poga varathu","forgiving me","24/7 en kuda irukkathu","kedakira time la vanthu enkuda pesurathu","kedakira gap la vanthu ummah kudukkurathu"];
+const reasons=["Your manasu","Your attitude","The time you give only to me","attention you give to me","That hidden love","Yen mela kaatura kovam","Your eyes","Your nose","Your eyebrows","Your lips","Your round face","That neck","unga Azhagu","neenga V2 la edukura risk","kedakira gap la vanthu ummah kudukkurathu","naa ketadum risk en kuda rounds Poga varathu","forgiving me","24/7 en kuda irukkathu","kedakira time la vanthu enkuda pesurathu","oops its going till infinity..."];
 const ummaahs=Array(20).fill("💋 Ummaah 💋"); 
 const reasonsContainer=document.getElementById('reasonsContainer');
 const ummaahContainer=document.getElementById('ummaahContainer');
 reasons.forEach((r,i)=>{let d=document.createElement('div');d.className='reasonBox';d.innerText=r;let c=document.createElement('div');c.className='count';c.innerText=i+1;d.appendChild(c);reasonsContainer.appendChild(d);});
 ummaahs.forEach((u,i)=>{let d=document.createElement('div');d.className='ummaahBox';d.innerText=u;let c=document.createElement('div');c.className='count';c.innerText=i+1;d.appendChild(c);ummaahContainer.appendChild(d);});
 
-// Carousel
+// Carousel with special 20th Ummaah
 function initCarousel(section,container){
   let idx=0; let boxes=container.children;
   section.style.display=section.style.display==='none'?'block':'none';
@@ -174,7 +211,8 @@ function initCarousel(section,container){
     if(idx<0)idx=0;if(idx>=boxes.length)idx=boxes.length-1;
     container.style.transform=`translateX(${-idx*100}%)`;
     if(section.id==="ummaahSection"){
-      document.getElementById('ummaahNormal').play();
+      let audio = (idx===19)?document.getElementById('ummaahSpecial'):document.getElementById('ummaahNormal');
+      audio.play();
       createFlyEmojiRandom('💋',1);
       if(idx===19){createFlyEmojiRandom('💋',15);}
     }
