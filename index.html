@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+body { background: linear-gradient(135deg, #c2e9fb, #a1c4fd); font-family:'Poppins',sans-serif; overflow-x:hidden; padding-bottom:50px; }
+.heart{position:fixed;font-size:18px;animation:floatUp 4s linear forwards;} 
+@keyframes floatUp {from{transform:translateY(0);opacity:1;} to{transform:translateY(-300px);opacity:0;}}
+.movable{position:absolute;transition:top 0.6s ease,left 0.6s ease;}
+#wishText{opacity:0;transform:scale(0.7);transition:0.6s;font-family:'Pacifico',cursive;text-align:center;}
+#wishText span{background:rgba(255,255,255,0.9);padding:12px 20px;border-radius:15px;color:#0d47a1;display:inline-block;}
+#finalMsg{opacity:0;transform:scale(0.7);transition:0.6s;background:rgba(255,255,255,0.9);padding:15px;border-radius:15px;color:#0d47a1;}
+.show{opacity:1 !important;transform:scale(1) !important;}
+.imgBox{background:rgba(255,255,255,0.7);padding:8px;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,0.1);cursor:pointer;}
+#imgModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);justify-content:center;align-items:center;z-index:999;}
+#imgModal img{width:100%;height:100%;object-fit:cover;}
+#reasonsSection,#ummaahSection,#onlineGiftSection{display:none;margin-top:12px;width:100%;overflow:hidden;position:relative;}
+#reasonsContainer,#ummaahContainer{display:flex;transition:transform 0.3s ease;touch-action:pan-x;}
+#onlineGiftContainer{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; justify-items:center; margin-top:8px;}
+.reasonBox,.ummaahBox,.giftBox{flex:0 0 80%;max-width:80%;height:4cm;margin:0 10%;background:rgba(255,255,255,0.85);border-radius:15px;text-align:center;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 4px 8px rgba(0,0,0,0.15);padding:8px;user-select:none;position:relative;}
+.count{position:absolute;top:5px;left:8px;font-size:12px;font-weight:bold;color:#0d47a1;}
+#handBtn,#letterBtn,#catchBtn,#showReasonsBtn,#showUmmaahBtn,#showGiftBtn{width:100%;padding:12px;margin-top:12px;border-radius:12px;color:white;font-weight:bold;}
+#letterBox{display:none;width:80%;height:8cm;background:rgba(255,255,255,0.9);border-radius:15px;margin:12px auto;text-align:center;padding:12px;font-size:14px;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+.flyingEmoji{position:absolute;font-size:24px;pointer-events:none;z-index:9999;}
+</style>
+</head>
+<body class="flex flex-col items-center px-3 py-6">
+
+<!-- Audios -->
+<audio id="bdayAudio"><source src="voice.ogg" type="audio/ogg"></audio>
+<audio id="ummaahNormal"><source src="ummaah_normal.ogg" type="audio/ogg"></audio>
+<audio id="handAudio"><source src="handAudio.ogg" type="audio/ogg"></audio>
+
+<!-- 🎂 WISH -->
+<div class="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
+  <div id="wishText" class="text-3xl px-4">
+    <span>HAPPY BIRTHDAY 🎂<br>Ammuuu Kunjiiii 💖</span>
+  </div>
+</div>
+
+<!-- 💘 FINAL -->
+<div class="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
+  <div id="finalMsg" class="text-center text-lg px-4">
+    Oops… you caught one of the butterflies 🦋<br>inside my stomach that fly whenever I see you ❤️
+  </div>
+</div>
+
+<!-- MAIN CARD -->
+<div id="card" class="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl p-5 w-full max-w-md text-center">
+<h1 class="text-3xl text-blue-500 mb-2" style="font-family: Pacifico;">Happy 20th Birthday 💖</h1>
+<div style="height:0.5cm"></div>
+<p class="text-gray-600 mb-2">⏳ Time since you were born</p>
+<div id="timer" class="text-blue-700 text-lg mb-4"></div>
+
+<!-- Buttons -->
+<button id="letterBtn" class="bg-orange-500 mt-2">Birthday Card 💌</button>
+<div id="letterBox">🎁 Demo Birthday Wish… Your letter will appear here!</div>
+
+<button id="catchBtn" class="bg-yellow-400 mt-2">Catch Me 😂</button>
+
+<button id="showReasonsBtn" class="bg-pink-500 mt-2">20 Reasons I Like You 💌</button>
+<div id="reasonsSection"><div id="reasonsContainer"></div></div>
+
+<button id="showUmmaahBtn" class="bg-red-500 mt-2">20 Personal Ummaahh 💋</button>
+<div id="ummaahSection"><div id="ummaahContainer"></div></div>
+
+<!-- Online Gift Section -->
+<p class="mt-4 text-blue-700 font-medium text-center">Here is your online lifetime gift, keep it with you 💖</p>
+<button id="showGiftBtn" class="bg-green-500 mt-2">Open Online Gift 🎁</button>
+<div id="onlineGiftSection">
+  <div id="onlineGiftContainer"></div>
+</div>
+
+<!-- IMAGES -->
+<h3 class="mt-6 text-blue-600 text-xl" style="font-family: Pacifico;">📸 Our Special Memorable Moments</h3>
+<div class="grid grid-cols-2 gap-4 mt-4 w-full max-w-md">
+  <div class="imgBox"><img src="img1.jpeg"/></div>
+  <div class="imgBox"><img src="img2.jpeg"/></div>
+  <div class="imgBox"><img src="img3.jpeg"/></div>
+  <div class="imgBox"><img src="img4.jpeg"/></div>
+  <div class="imgBox"><img src="img5.jpeg"/></div>
+  <div class="imgBox"><img src="img6.jpeg"/></div>
+  <div class="imgBox"><img src="img7.jpeg"/></div>
+  <div class="imgBox"><img src="img8.jpeg"/></div>
+</div>
+
+<!-- Hand Button at Bottom -->
+<p class="mt-4 text-blue-700 font-medium text-center">Give your hand to explore more and create memories like this.</p>
+<button id="handBtn" class="bg-purple-500 mt-2 w-full">Give Me Your Hand 🤝</button>
+
+<!-- IMAGE MODAL -->
+<div id="imgModal" class="flex"><img src="" id="modalImg"/></div>
+
+<script>
+// === Timer ===
+function getISTNow(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Kolkata"}));}
+function updateTimer(){let now=getISTNow();let years=now.getFullYear()-2006;let months=now.getMonth()-3;let days=now.getDate()-4;if(days<0){months--;days+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}if(months<0){years--;months+=12;}let h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();document.getElementById("timer").innerText=`${years}y ${months}m ${days}d ${h}h ${m}m ${s}s ❤️`;}
+setInterval(updateTimer,1000); updateTimer();
+
+// === Hearts ===
+setInterval(()=>{ let h=document.createElement("div"); h.className="heart"; h.innerText="💖"; h.style.left=(30+Math.random()*40)+"vw"; h.style.bottom="0px"; document.body.appendChild(h); setTimeout(()=>h.remove(),4000); },150);
+
+// === Confetti ===
+function fullPop(){for(let i=0;i<3;i++){confetti({particleCount:150,spread:80,origin:{x:0.5,y:0.6}, shapes:["💖","💋","🦋","🎈","🎀","🌟"]});}}
+
+// === Birthday Wish ===
+window.onload=()=>{
+  let t=document.getElementById("wishText"); 
+  let a=document.getElementById("bdayAudio");
+  setTimeout(()=>t.classList.add("show"),200); fullPop();
+  a.play().catch(()=>{document.body.addEventListener("click",()=>a.play(),{once:true});});
+  setTimeout(()=>t.classList.remove("show"),5000);
+};
+
+// === Butterfly Catch ===
+let btn=document.getElementById("catchBtn"); let active=false; let moveInterval;
+btn.onclick=()=>{
+  if(!active){active=true; btn.innerText="🦋"; btn.classList.add("movable"); btn.style.width="60px"; btn.style.height="60px"; btn.style.borderRadius="50%"; let card=document.getElementById("card");
+    moveInterval=setInterval(()=>{ let x=Math.random()*(card.clientWidth-60); let y=Math.random()*(card.clientHeight-60); btn.style.left=x+"px"; btn.style.top=y+"px"; },650);
+  }else{ clearInterval(moveInterval); let msg=document.getElementById("finalMsg"); msg.classList.add("show"); fullPop(); setTimeout(()=>{ msg.classList.remove("show"); btn.innerText="Catch Me 😂"; btn.classList.remove("movable"); btn.style=""; active=false; },5000);}
+};
+
+// === Full-screen images ===
+document.querySelectorAll('.imgBox img').forEach(img=>{
+  img.onclick=()=>{document.getElementById('modalImg').src=img.src;document.getElementById('imgModal').style.display='flex';}
+});
+document.getElementById('imgModal').onclick=()=>{document.getElementById('imgModal').style.display='none';}
+
+// === Birthday Card Toggle ===
+document.getElementById('letterBtn').onclick=()=>{let l=document.getElementById('letterBox'); l.style.display=l.style.display==='none'?'block':'none';}
+
+// === Online Gift Toggle & Buttons ===
+const onlineGiftSection=document.getElementById('onlineGiftSection');
+document.getElementById('showGiftBtn').onclick=()=>{onlineGiftSection.style.display=onlineGiftSection.style.display==='none'?'block':'none';}
+
+const giftButtons = [
+  {text:"I Love You ❤️", sound:"love.ogg", emoji:"💖"},
+  {text:"Sorry 😔", sound:"sorry.ogg", emoji:"💌"},
+  {text:"I Like You 😏", sound:"like.ogg", emoji:"💋"},
+  {text:"Meow Meow 🐱", sound:"meow.ogg", emoji:"🐱"},
+  {text:"Dubi Dubi 🎵", sound:"dubi.ogg", emoji:"🎶"},
+  {text:"Special Ummaah 💋", sound:"special_ummaah.ogg", emoji:"💋"}
+];
+const onlineGiftContainer=document.getElementById('onlineGiftContainer');
+giftButtons.forEach((b)=>{
+  let btn = document.createElement('button'); btn.className='giftBox bg-purple-400 text-white';
+  btn.innerText=b.text;
+  let audio = document.createElement('audio'); audio.src=b.sound; btn.appendChild(audio);
+  btn.onclick=()=>{
+    audio.play();
+    createFlyEmojiRandom(b.emoji,15);
+  };
+  onlineGiftContainer.appendChild(btn);
+});
+
+// === Flying Emoji Utility (Scattered) ===
+function createFlyEmojiRandom(type='💋', count=10){
+  for(let i=0;i<count;i++){
+    let f=document.createElement('div'); f.className='flyingEmoji'; f.innerText=type;
+    f.style.left = Math.random()*window.innerWidth + 'px';
+    f.style.top = Math.random()*window.innerHeight + 'px';
+    let rot = (Math.random()*360)+'deg';
+    let scale = (0.8+Math.random()*0.7);
+    let xMove = (Math.random()-0.5) * 200;
+    let yMove = - (50 + Math.random()*150);
+    f.animate([{transform:`translate(0,0) rotate(0deg) scale(1)`,opacity:1},{transform:`translate(${xMove}px, ${yMove}px) rotate(${rot}) scale(${scale})`,opacity:0}],{duration:1500,easing:'ease-out'});
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1500);
+  }
+}
+
+// === Hand Button Random Pop ===
+document.getElementById('handBtn').onclick=()=>{
+  document.getElementById('handAudio').play();
+  createFlyEmojiRandom('💋',20);
+  createFlyEmojiRandom('💖',20);
+  createFlyEmojiRandom('🦋',20);
+};
+
+// === 20 Reasons & Ummaahh Carousel ===
+const reasons=["You make me smile","Your laugh is cute","You're kind","You're amazing","Your eyes sparkle","You inspire me","You are my comfort","You are my sunshine","Your hugs are magic","Your voice is sweet","You are brave","You are thoughtful","You are creative","Your style is perfect","You make my day","You are my world","You are my favorite","You are my treasure","You are my heart","I love everything about you","Oops… it’s going until infinity 💖"];
+const ummaahs=Array(20).fill("💋 Ummaah 💋"); 
+const reasonsContainer=document.getElementById('reasonsContainer');
+const ummaahContainer=document.getElementById('ummaahContainer');
+reasons.forEach((r,i)=>{let d=document.createElement('div'); d.className='reasonBox'; d.innerText=r; let c=document.createElement('div'); c.className='count'; c.innerText=i+1; d.appendChild(c); reasonsContainer.appendChild(d);});
+ummaahs.forEach((u,i)=>{let d=document.createElement('div'); d.className='ummaahBox'; d.innerText=u; let c=document.createElement('div'); c.className='count'; c.innerText=i+1; d.appendChild(c); ummaahContainer.appendChild(d);});
+
+// === Carousels ===
+function initCarousel(section,container,audioNormal){
+  let idx=0; let boxes=container.children;
+  section.style.display=section.style.display==='none'?'block':'none';
+  container.style.transform='translateX(0%)';
+  let startX,endX;
+  container.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;});
+  container.addEventListener('touchend',e=>{
+    endX=e.changedTouches[0].clientX;
+    if(startX-endX>40){idx++;}else if(endX-startX>40){idx--;}
+    if(idx<0)idx=0;if(idx>=boxes.length)idx=boxes.length-1;
+    container.style.transform=`translateX(${-idx*100}%)`;
+    if(section===ummaahSection){
+        audioNormal.play();
+        createFlyEmojiRandom('💋',1); // single kiss on slide
+        if(idx===19){ createFlyEmojiRandom('💋',15); } // 20th special
+    }
+  });
+}
+
+document.getElementById('showReasonsBtn').onclick=()=>{initCarousel(document.getElementById('reasonsSection'),reasonsContainer,null);}
+document.getElementById('showUmmaahBtn').onclick=()=>{initCarousel(document.getElementById('ummaahSection'),ummaahContainer,document.getElementById('ummaahNormal'));}
+
+</script>
+</body>
+</html>
